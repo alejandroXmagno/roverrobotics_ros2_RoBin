@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- 
+        Intel RealSense D435i Camera URDF
+        Mounts on the rover's dev payload
+        Provides RGB, Depth, and IMU data for navigation
+    -->
+
+    <!-- Camera Link -->
+    <link name="camera_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.025 0.090 0.025"/>
+            </geometry>
+            <material name="camera_aluminum">
+                <color rgba="0.5 0.5 0.5 1.0"/>
+            </material>
+        </visual>
+        
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.025 0.090 0.025"/>
+            </geometry>
+        </collision>
+        
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.072"/>
+            <inertia ixx="0.000003881" ixy="0.0" ixz="0.0"
+                     iyy="0.000000597" iyz="0.0"
+                     izz="0.000003879"/>
+        </inertial>
+    </link>
+
+    <!-- Mount camera to payload -->
+    <joint name="camera_joint" type="fixed">
+        <parent link="payload_link"/>
+        <child link="camera_link"/>
+        <!-- Mounted at front center (near lidar), facing forward -->
+        <origin xyz="0.17 0.0 0.065" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Camera Depth Optical Frame -->
+    <link name="camera_depth_frame"/>
+    
+    <joint name="camera_depth_joint" type="fixed">
+        <parent link="camera_link"/>
+        <child link="camera_depth_frame"/>
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+
+    <!-- Camera Depth Optical Frame -->
+    <link name="camera_depth_optical_frame"/>
+    
+    <joint name="camera_depth_optical_joint" type="fixed">
+        <parent link="camera_depth_frame"/>
+        <child link="camera_depth_optical_frame"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Camera Color Optical Frame -->
+    <link name="camera_color_frame"/>
+    
+    <joint name="camera_color_joint" type="fixed">
+        <parent link="camera_link"/>
+        <child link="camera_color_frame"/>
+        <origin xyz="0 0.015 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+
+    <!-- Camera Color Optical Frame -->
+    <link name="camera_color_optical_frame"/>
+    
+    <joint name="camera_color_optical_joint" type="fixed">
+        <parent link="camera_color_frame"/>
+        <child link="camera_color_optical_frame"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Camera Infra1 Optical Frame -->
+    <link name="camera_infra1_frame"/>
+    
+    <joint name="camera_infra1_joint" type="fixed">
+        <parent link="camera_link"/>
+        <child link="camera_infra1_frame"/>
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+
+    <!-- Camera Infra1 Optical Frame -->
+    <link name="camera_infra1_optical_frame"/>
+    
+    <joint name="camera_infra1_optical_joint" type="fixed">
+        <parent link="camera_infra1_frame"/>
+        <child link="camera_infra1_optical_frame"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Camera Infra2 Optical Frame -->
+    <link name="camera_infra2_frame"/>
+    
+    <joint name="camera_infra2_joint" type="fixed">
+        <parent link="camera_link"/>
+        <child link="camera_infra2_frame"/>
+        <origin xyz="0 -0.050 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+
+    <!-- Camera Infra2 Optical Frame -->
+    <link name="camera_infra2_optical_frame"/>
+    
+    <joint name="camera_infra2_optical_joint" type="fixed">
+        <parent link="camera_infra2_frame"/>
+        <child link="camera_infra2_optical_frame"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Camera IMU Frame (if using D435i) -->
+    <link name="camera_imu_frame"/>
+    
+    <joint name="camera_imu_joint" type="fixed">
+        <parent link="camera_link"/>
+        <child link="camera_imu_frame"/>
+        <origin xyz="-0.00552 -0.00552 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Camera IMU Optical Frame -->
+    <link name="camera_imu_optical_frame"/>
+    
+    <joint name="camera_imu_optical_joint" type="fixed">
+        <parent link="camera_imu_frame"/>
+        <child link="camera_imu_optical_frame"/>
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+
+    <!-- Ignition Gazebo plugin for RealSense D435i simulation -->
+    <gazebo reference="camera_link">
+        <material>Gazebo/Grey</material>
+        
+        <!-- RGB Camera Sensor -->
+        <sensor name="camera_color" type="camera">
+            <pose>0 0.015 0 0 0 0</pose>
+            <camera>
+                <horizontal_fov>1.5184</horizontal_fov>
+                <image>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>RGB_INT8</format>
+                </image>
+                <clip>
+                    <near>0.1</near>
+                    <far>100</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+            </camera>
+            <always_on>1</always_on>
+            <update_rate>30</update_rate>
+            <visualize>true</visualize>
+            <topic>/camera/color/image_raw</topic>
+            <enable_metrics>false</enable_metrics>
+        </sensor>
+        
+        <!-- Depth Camera Sensor -->
+        <sensor name="camera_depth" type="depth_camera">
+            <pose>0 0 0 0 0 0</pose>
+            <camera>
+                <horizontal_fov>1.5184</horizontal_fov>
+                <image>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>R_FLOAT32</format>
+                </image>
+                <clip>
+                    <near>0.3</near>
+                    <far>10.0</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </camera>
+            <always_on>1</always_on>
+            <update_rate>30</update_rate>
+            <visualize>false</visualize>
+            <topic>/camera/depth/image_rect_raw</topic>
+            <enable_metrics>false</enable_metrics>
+        </sensor>
+    </gazebo>
+
+</robot>
+
