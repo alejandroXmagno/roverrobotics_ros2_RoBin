@@ -66,6 +66,12 @@ def generate_launch_description():
             '/joint_states@sensor_msgs/msg/JointState[gz.msgs.Model',
             '/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
             '/imu/data@sensor_msgs/msg/Imu@gz.msgs.IMU',
+            # RealSense D435i camera topics
+            '/camera/color/image_raw@sensor_msgs/msg/Image[gz.msgs.Image',
+            '/camera/depth/image_rect_raw@sensor_msgs/msg/Image[gz.msgs.Image',
+            '/camera/color/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
+            '/camera/depth/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
+            '/camera/depth/color/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked',
         ],
     )
 
